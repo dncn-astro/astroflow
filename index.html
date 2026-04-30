@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Astroflow — Automatisation IA pour les agences immobilières. Chatbot 24/7, capture de leads qualifiés, relances automatiques.">
+<title>Astroflow — Automatisation IA pour l'Immobilier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04040a;
+  --bg2: #08081280;
+  --card: rgba(255,255,255,0.04);
+  --card-h: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --glow-border: rgba(139,92,246,0.3);
+  --v1: #8B5CF6;
+  --v2: #A855F7;
+  --v3: #C084FC;
+  --vglow: rgba(139,92,246,0.2);
+  --t1: #FFFFFF;
+  --t2: #94949F;
+  --t3: #4a4a5a;
+  --green: #34d399;
+  --r: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --f1: 'Inter', sans-serif;
+  --fd: 'Space Grotesk', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--f1);background:var(--bg);color:var(--t1);line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--v1);border-radius:3px}
+::selection{background:rgba(139,92,246,0.3);color:#fff}
+h1,h2,h3,h4{font-family:var(--fd);line-height:1.12;letter-spacing:-0.02em}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* UTILITIES */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.grad-text{background:linear-gradient(135deg,#fff 0%,var(--v3) 50%,var(--v2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3);margin-bottom:24px}
+.badge::before{content:'';width:7px;height:7px;background:var(--v1);border-radius:50%;animation:pdot 2s ease-in-out infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.sec-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:16px}
+.sec-sub{font-size:1.05rem;color:var(--t2);line-height:1.75;max-width:580px}
+section{padding:120px 0;position:relative}
+.sec-head{text-align:center;margin-bottom:72px}
+.sec-head .sec-sub{margin:0 auto}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:14px;font-family:var(--f1);font-size:.92rem;font-weight:600;cursor:pointer;transition:var(--r);border:none}
+.btn-p{background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;box-shadow:0 8px 30px rgba(139,92,246,.4)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(139,92,246,.6)}
+.btn-s{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px)}
+.btn-s:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.28);transform:translateY(-2px)}
+
+/* REVEAL */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rev.on{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ========== NAV ========== */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 0;transition:var(--r)}
+nav.sc{background:rgba(4,4,10,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:13px 0}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--v1),var(--v2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(139,92,246,.45)}
+.logo-text{font-family:var(--fd);font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
+.logo-text span{color:var(--v3)}
+.nav-links{display:flex;gap:4px;list-style:none}
+.nav-links a{color:var(--t2);font-size:.88rem;font-weight:500;padding:8px 13px;border-radius:9px;transition:var(--r)}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}
+.ham span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:var(--r)}
+.mob-nav{display:none;flex-direction:column;position:fixed;top:65px;left:0;right:0;background:rgba(4,4,10,.97);border-bottom:1px solid var(--border);padding:16px 24px;gap:4px;z-index:999;backdrop-filter:blur(20px)}
+.mob-nav a{color:var(--t2);font-size:.95rem;font-weight:500;padding:12px 0;border-bottom:1px solid var(--border)}
+.mob-nav a:last-child{border-bottom:none}
+.mob-nav.show{display:flex}
+
+/* ========== HERO ========== */
+#hero{min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:120px 0 80px}
+#pcanvas{position:absolute;inset:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(139,92,246,.22) 0%,transparent 70%);top:-180px;right:-60px;animation:fo1 16s ease-in-out infinite}
+.o2{width:380px;height:380px;background:radial-gradient(circle,rgba(168,85,247,.18) 0%,transparent 70%);bottom:0;left:-80px;animation:fo2 13s ease-in-out infinite}
+.o3{width:260px;height:260px;background:radial-gradient(circle,rgba(192,132,252,.13) 0%,transparent 70%);top:45%;left:45%;animation:fo3 19s ease-in-out infinite}
+@keyframes fo1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-45px,28px) scale(1.06)}66%{transform:translate(28px,-16px) scale(.97)}}
+@keyframes fo2{0%,100%{transform:translate(0,0)}50%{transform:translate(36px,-26px)}}
+@keyframes fo3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-44%,-56%)}}
+.grid-ov{position:absolute;inset:0;background-image:linear-gradient(rgba(139,92,246,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.035) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at 50% 50%,black 30%,transparent 80%)}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:100px;font-size:.78rem;font-weight:700;color:var(--v3);margin-bottom:28px;animation:fiu .8s ease-out both}
+.hero-dot{width:8px;height:8px;background:var(--v1);border-radius:50%;animation:pglow 2s ease-in-out infinite}
+@keyframes pglow{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.7)}50%{box-shadow:0 0 0 9px rgba(139,92,246,0)}}
+.hero-title{font-size:clamp(2.8rem,5vw,4.4rem);font-weight:900;line-height:1.07;margin-bottom:22px;animation:fiu .8s ease-out .08s both}
+.hero-sub{font-size:1.15rem;color:var(--t2);line-height:1.75;max-width:540px;margin-bottom:38px;animation:fiu .8s ease-out .18s both}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fiu .8s ease-out .28s both}
+.hero-stats{display:flex;gap:44px;margin-top:64px;padding-top:44px;border-top:1px solid var(--border);animation:fiu .8s ease-out .48s both;flex-wrap:wrap}
+.hs-val{font-family:var(--fd);font-size:2rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hs-lbl{font-size:.75rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+@keyframes fiu{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO MOCKUP */
+.hero-mockup{position:relative;z-index:2;display:flex;flex-direction:column;gap:16px;animation:fiu .8s ease-out .3s both}
+.mock-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:20px;backdrop-filter:blur(20px);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 40px rgba(139,92,246,.07)}
+.mock-card.float1{animation:mf1 7s ease-in-out infinite}
+.mock-card.float2{animation:mf2 9s ease-in-out infinite}
+@keyframes mf1{0%,100%{transform:translateY(0) rotate(.5deg)}50%{transform:translateY(-10px) rotate(.5deg)}}
+@keyframes mf2{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-7px) rotate(-.5deg)}}
+.mock-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.mock-av{width:34px;height:34px;background:linear-gradient(135deg,var(--v1),var(--v2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+.mock-hinfo h5{font-size:.82rem;font-weight:700;color:#fff}
+.mock-online{font-size:.68rem;color:var(--green);display:flex;align-items:center;gap:4px}
+.mock-online::before{content:'';width:5px;height:5px;background:var(--green);border-radius:50%;animation:pdot 2s infinite}
+.mock-msg{background:rgba(255,255,255,.05);border-radius:8px 14px 14px 14px;padding:9px 13px;font-size:.78rem;color:var(--t2);line-height:1.55;margin-bottom:8px}
+.mock-msg.user-msg{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(168,85,247,.2));border-radius:14px 8px 14px 14px;color:#fff;text-align:right}
+.mock-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.mock-chip{padding:4px 10px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.22);border-radius:100px;font-size:.68rem;color:var(--v3);font-weight:600}
+.mock-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.mock-stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px}
+.mock-stat-v{font-family:var(--fd);font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mock-stat-l{font-size:.65rem;color:var(--t3);font-weight:600;margin-top:2px}
+
+/* ========== SERVICES ========== */
+#services{background:linear-gradient(180deg,var(--bg) 0%,#07071200 100%)}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px}
+.svc-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;transition:var(--r);position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--v1),transparent);opacity:0;transition:var(--r)}
+.svc-card:hover{background:var(--card-h);border-color:var(--glow-border);transform:translateY(-7px);box-shadow:0 22px 60px rgba(139,92,246,.14),0 0 40px rgba(139,92,246,.05)}
+.svc-card:hover::before{opacity:1}
+.svc-icon{width:54px;height:54px;background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(168,85,247,.12));border:1px solid rgba(139,92,246,.22);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:22px;transition:var(--r)}
+.svc-card:hover .svc-icon{background:linear-gradient(135deg,rgba(139,92,246,.32),rgba(168,85,247,.22));box-shadow:0 6px 22px rgba(139,92,246,.25)}
+.svc-tag{display:inline-block;padding:3px 10px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--v3);margin-bottom:10px}
+.svc-card h3{font-size:1.25rem;font-weight:700;margin-bottom:10px}
+.svc-card p{font-size:.88rem;color:var(--t2);line-height:1.72;margin-bottom:18px}
+.svc-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.svc-list li{display:flex;align-items:center;gap:9px;font-size:.82rem;color:var(--t2)}
+.svc-list li::before{content:'';width:16px;height:16px;min-width:16px;border-radius:50%;background:rgba(139,92,246,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8l3 3L12.5 5' stroke='%238B5CF6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;border:1px solid rgba(139,92,246,.25)}
+
+/* ========== RESULTATS ========== */
+#resultats{overflow:hidden}
+.res-wrap{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:44px}
+.step{display:flex;gap:18px;padding:22px 0;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:18px;top:58px;bottom:0;width:2px;background:linear-gradient(to bottom,var(--v1),transparent)}
+.step-num{width:38px;height:38px;min-width:38px;background:linear-gradient(135deg,var(--v1),var(--v2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.82rem;font-weight:800;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.4);position:relative;z-index:1}
+.step-body h4{font-size:1rem;font-weight:700;margin-bottom:5px}
+.step-body p{font-size:.84rem;color:var(--t2);line-height:1.65}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px;position:relative;overflow:hidden;transition:var(--r)}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--v1),var(--v2));transform:scaleX(0);transition:var(--r)}
+.sc:hover{background:var(--card-h);transform:translateY(-4px);box-shadow:0 0 40px rgba(139,92,246,.13)}
+.sc:hover::after{transform:scaleX(1)}
+.stat-n{font-family:var(--fd);font-size:2.6rem;font-weight:900;line-height:1;background:linear-gradient(135deg,#fff 30%,var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px}
+.stat-l{font-size:.8rem;color:var(--t3);font-weight:500}
+.stat-t{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:var(--green);font-weight:700;margin-top:7px}
+
+/* ========== TEMOIGNAGES ========== */
+#temoignages{background:linear-gradient(180deg,rgba(139,92,246,.04) 0%,transparent 100%)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px;transition:var(--r)}
+.tc:hover{border-color:var(--glow-border);box-shadow:0 0 40px rgba(139,92,246,.1);transform:translateY(-4px)}
+.tc-stars{display:flex;gap:3px;margin-bottom:14px;color:#FCD34D;font-size:.95rem}
+.tc-quote{font-size:.9rem;color:var(--t2);line-height:1.75;font-style:italic;margin-bottom:22px;position:relative;padding-top:10px}
+.tc-quote::before{content:'"';font-family:var(--fd);font-size:3.5rem;color:var(--v1);opacity:.25;position:absolute;top:-14px;left:-6px;line-height:1}
+.tc-author{display:flex;align-items:center;gap:11px}
+.tc-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--v1),var(--v2));display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:.84rem;flex-shrink:0}
+.tc-info h4{font-size:.9rem;font-weight:700}
+.tc-info p{font-size:.74rem;color:var(--t3)}
+.tc-result{display:inline-flex;align-items:center;gap:5px;margin-top:14px;padding:5px 11px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:100px;font-size:.7rem;font-weight:700;color:var(--green)}
+
+/* ========== CONTACT ========== */
+.contact-wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:80px;align-items:start}
+.contact-feats{display:flex;flex-direction:column;gap:18px;margin-top:36px}
+.cf{display:flex;align-items:center;gap:14px}
+.cf-icon{width:42px;height:42px;min-width:42px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.cf-body h4{font-size:.9rem;font-weight:700;margin-bottom:2px}
+.cf-body p{font-size:.78rem;color:var(--t3)}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:28px;padding:44px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.fg label{font-size:.8rem;font-weight:600;color:var(--t2)}
+.fg input,.fg textarea,.fg select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:11px 15px;color:#fff;font-family:var(--f1);font-size:.88rem;transition:var(--r);outline:none;width:100%}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--v1);background:rgba(139,92,246,.05);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+.fg textarea{resize:none;min-height:110px}
+.fg select option{background:#12121e;color:#fff}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--t3)}
+.fsub{width:100%;justify-content:center;padding:14px;font-size:.95rem;margin-top:4px}
+.fnote{font-size:.72rem;color:var(--t3);text-align:center;margin-top:10px}
+.success-box{display:none;text-align:center;padding:48px 20px}
+.success-box .si{font-size:46px;margin-bottom:14px}
+.success-box h3{font-size:1.5rem;margin-bottom:8px}
+.success-box p{color:var(--t2);font-size:.9rem}
+
+/* ========== FOOTER ========== */
+footer{background:#06060e;border-top:1px solid var(--border);padding:64px 0 28px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.foot-brand p{font-size:.84rem;color:var(--t3);line-height:1.7;margin-top:12px;max-width:270px}
+.fh{font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.flinks{list-style:none;display:flex;flex-direction:column;gap:9px}
+.flinks a{color:var(--t2);font-size:.84rem;transition:var(--r)}
+.flinks a:hover{color:var(--v3)}
+.foot-bottom{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--t3)}
+
+/* ========== CHATBOT ========== */
+.cb-wrap{position:fixed;bottom:26px;right:26px;z-index:10000}
+.cb-btn{width:58px;height:58px;background:linear-gradient(135deg,var(--v1),var(--v2));border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 30px rgba(139,92,246,.55);transition:var(--r);position:relative}
+.cb-btn:hover{transform:scale(1.09);box-shadow:0 12px 40px rgba(139,92,246,.75)}
+.cb-dot{position:absolute;top:-1px;right:-1px;width:13px;height:13px;background:var(--green);border-radius:50%;border:2px solid var(--bg)}
+.cb-panel{position:absolute;bottom:74px;right:0;width:356px;background:#0c0c18;border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.65),0 0 40px rgba(139,92,246,.1);display:none;flex-direction:column}
+.cb-panel.open{display:flex;animation:cbopen .28s cubic-bezier(.4,0,.2,1) both}
+@keyframes cbopen{from{opacity:0;transform:scale(.9) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.cb-head{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(168,85,247,.12));border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:11px}
+.cb-hav{width:38px;height:38px;background:linear-gradient(135deg,var(--v1),var(--v2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cb-hname{font-size:.88rem;font-weight:700}
+.cb-status{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--green)}
+.cb-sdot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pdot 2s infinite}
+.cb-close{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;transition:var(--r);line-height:1;padding:2px}
+.cb-close:hover{color:#fff}
+.cb-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:11px;max-height:360px;min-height:280px;scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.3) transparent}
+.cb-msgs::-webkit-scrollbar{width:3px}
+.cb-msgs::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:2px}
+.cmsg{display:flex;gap:7px;animation:min .28s ease-out both}
+@keyframes min{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.cmsg.bot{align-items:flex-start}
+.cmsg.user{flex-direction:row-reverse}
+.cav{width:26px;height:26px;min-width:26px;background:linear-gradient(135deg,var(--v1),var(--v2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.cav.u{background:rgba(255,255,255,.08)}
+.cbubble{max-width:82%;padding:9px 13px;border-radius:16px;font-size:.82rem;line-height:1.55}
+.cmsg.bot .cbubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);color:var(--t2);border-radius:4px 16px 16px 16px}
+.cmsg.user .cbubble{background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;border-radius:16px 4px 16px 16px}
+.typing{display:flex;align-items:center;gap:4px;padding:11px 15px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:4px 16px 16px 16px;width:fit-content}
+.tdot{width:5px;height:5px;background:var(--t3);border-radius:50%;animation:tb 1.4s ease-in-out infinite}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.qr-area{display:flex;flex-wrap:wrap;gap:5px;padding:0 18px 10px}
+.qr{padding:5px 11px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:100px;font-size:.7rem;font-weight:600;color:var(--v3);cursor:pointer;transition:var(--r);font-family:var(--f1)}
+.qr:hover{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
+.cb-input-row{border-top:1px solid var(--border);padding:11px 14px;display:flex;gap:8px;align-items:center}
+.cb-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:9px 15px;color:#fff;font-family:var(--f1);font-size:.82rem;outline:none;transition:var(--r)}
+.cb-inp:focus{border-color:var(--v1);background:rgba(139,92,246,.05)}
+.cb-inp::placeholder{color:var(--t3)}
+.cb-send{width:34px;height:34px;min-width:34px;background:linear-gradient(135deg,var(--v1),var(--v2));border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--r)}
+.cb-send:hover{transform:scale(1.12);box-shadow:0 4px 12px rgba(139,92,246,.4)}
+.cb-send svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-mockup{display:none}
+  .res-wrap{grid-template-columns:1fr;gap:60px}
+  .contact-wrap{grid-template-columns:1fr;gap:44px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  section{padding:80px 0}
+  .nav-links,.nav-right .btn-s{display:none}
+  .ham{display:flex}
+  .hero-stats{gap:28px}
+  .services-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .form-card{padding:26px 18px}
+  .foot-grid{grid-template-columns:1fr;gap:28px}
+  .foot-bottom{flex-direction:column;gap:10px;text-align:center}
+  .cb-panel{width:312px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">Astro<span>flow</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#resultats">Résultats</a></li>
+      <li><a href="#temoignages">Témoignages</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#contact" class="btn btn-s">Se connecter</a>
+      <a href="#contact" class="btn btn-p">Démarrer →</a>
+      <button class="ham" id="ham" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mob-nav" id="mobNav">
+  <a href="#services">Services</a>
+  <a href="#resultats">Résultats</a>
+  <a href="#temoignages">Témoignages</a>
+  <a href="#contact">Contact</a>
+  <a href="#contact" class="btn btn-p" style="margin-top:8px;justify-content:center">Démarrer →</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="pcanvas"></canvas>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="grid-ov"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge"><div class="hero-dot"></div>L'IA au service de votre agence immobilière</div>
+        <h1 class="hero-title">Transformez chaque<br>prospect en mandat<br><span class="grad-text">grâce à l'IA</span></h1>
+        <p class="hero-sub">Astroflow automatise votre acquisition clients de A à Z. Chatbot 24/7, leads qualifiés, relances intelligentes. Vos concurrents dorment — vous, vous vendez.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn btn-p">Obtenir une démo gratuite <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="#services" class="btn btn-s">Découvrir nos services</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hs-val">847+</div><div class="hs-lbl">Leads / mois</div></div>
+          <div><div class="hs-val">94%</div><div class="hs-lbl">Qualification</div></div>
+          <div><div class="hs-val">×3</div><div class="hs-lbl">Plus de mandats</div></div>
+          <div><div class="hs-val">&lt;60s</div><div class="hs-lbl">Temps de réponse</div></div>
+        </div>
+      </div>
+      <div class="hero-mockup">
+        <div class="mock-card float1">
+          <div class="mock-header">
+            <div class="mock-av">⚡</div>
+            <div class="mock-hinfo">
+              <h5>Astroflow AI</h5>
+              <span class="mock-online">En ligne · répond en &lt;10s</span>
+            </div>
+          </div>
+          <div class="mock-msg">Bonjour ! Je suis intéressé par un appartement T3 à Lyon, budget 280 000€. Pouvez-vous m'aider ?</div>
+          <div class="mock-msg user-msg">Bien sûr ! J'ai 4 biens correspondant à votre budget. Souhaitez-vous planifier une visite cette semaine ?</div>
+          <div class="mock-msg">Oui, disponible jeudi ou vendredi après-midi.</div>
+          <div class="mock-chips">
+            <span class="mock-chip">✓ Lead qualifié</span>
+            <span class="mock-chip">📅 RDV planifié</span>
+            <span class="mock-chip">🎯 Budget confirmé</span>
+          </div>
+        </div>
+        <div class="mock-card float2">
+          <p style="font-size:.7rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Tableau de bord — Juin 2025</p>
+          <div class="mock-stats-row">
+            <div class="mock-stat"><div class="mock-stat-v">127</div><div class="mock-stat-l">Leads ce mois</div></div>
+            <div class="mock-stat"><div class="mock-stat-v">94%</div><div class="mock-stat-l">Qualifiés</div></div>
+            <div class="mock-stat"><div class="mock-stat-v">×3.2</div><div class="mock-stat-l">ROI</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="sec-head">
+      <div class="badge">Nos services</div>
+      <h2 class="sec-title grad-text">Tout ce dont votre agence a besoin<br>pour dominer son marché</h2>
+      <p class="sec-sub">Quatre solutions IA intégrées pour automatiser votre croissance et vous concentrer sur ce qui compte vraiment : vendre.</p>
+    </div>
+    <div class="services-grid">
+      <div class="svc-card rev">
+        <div class="svc-icon">🤖</div>
+        <div class="svc-tag">Intelligence Artificielle</div>
+        <h3>Chatbot IA 24/7</h3>
+        <p>Votre commercial virtuel répond à vos prospects à 3h du matin comme à 15h. Qualification automatique, prise de RDV et réponses personnalisées.</p>
+        <ul class="svc-list">
+          <li>Réponse en moins de 5 secondes</li>
+          <li>Qualification automatique des leads</li>
+          <li>Intégration CRM native</li>
+          <li>Disponible sur site, WhatsApp & Messenger</li>
+        </ul>
+      </div>
+      <div class="svc-card rev d1">
+        <div class="svc-icon">🎯</div>
+        <div class="svc-tag">Capture & Qualification</div>
+        <h3>Capture de Leads Intelligente</h3>
+        <p>Chaque visiteur devient un prospect qualifié. Notre IA analyse, segmente et priorise vos leads pour maximiser votre taux de conversion.</p>
+        <ul class="svc-list">
+          <li>Formulaires intelligents adaptatifs</li>
+          <li>Scoring automatique des prospects</li>
+          <li>Segmentation par projet et budget</li>
+          <li>Alertes temps réel pour leads chauds</li>
+        </ul>
+      </div>
+      <div class="svc-card rev d2">
+        <div class="svc-icon">⚡</div>
+        <div class="svc-tag">Nurturing Automatisé</div>
+        <h3>Relances Automatiques</h3>
+        <p>Fini les leads qui refroidissent. Séquences d'emails et SMS personnalisés qui maintiennent l'engagement jusqu'à la signature du mandat.</p>
+        <ul class="svc-list">
+          <li>Séquences email & SMS multi-étapes</li>
+          <li>Personnalisation par comportement</li>
+          <li>Timing optimisé par l'IA</li>
+          <li>Déclencheurs automatiques intelligents</li>
+        </ul>
+      </div>
+      <div class="svc-card rev d3">
+        <div class="svc-icon">✍️</div>
+        <div class="svc-tag">Création de Contenu</div>
+        <h3>Gestion de Contenu IA</h3>
+        <p>Posts LinkedIn, fiches biens, newsletters… L'IA génère du contenu immobilier authentique qui renforce votre autorité et attire les mandants.</p>
+        <ul class="svc-list">
+          <li>Descriptions de biens en 30 secondes</li>
+          <li>Posts réseaux sociaux automatisés</li>
+          <li>Newsletter mensuelle personnalisée</li>
+          <li>SEO local optimisé par l'IA</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RÉSULTATS -->
+<section id="resultats">
+  <div class="container">
+    <div class="res-wrap">
+      <div>
+        <div class="badge">Chiffres clés</div>
+        <h2 class="sec-title">Des résultats<br><span class="grad-text">mesurables & concrets</span></h2>
+        <p class="sec-sub">Nos clients constatent des résultats dès les 30 premiers jours. Pas de promesses vides — des données réelles, vérifiables.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Intégration en 48h</h4>
+              <p>On connecte Astroflow à vos outils existants (CRM, site web, réseaux) sans aucune interruption de votre activité.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Configuration personnalisée</h4>
+              <p>Notre équipe configure chaque automatisation selon votre marché local, votre style de communication et vos objectifs.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Résultats dès J+30</h4>
+              <p>Vous observez les premiers leads qualifiés et les mandats augmenter. On suit et optimise chaque semaine avec vous.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stats-grid rev">
+        <div class="sc"><div class="stat-n" data-target="847">0</div><div class="stat-l">Leads générés / mois</div><div class="stat-t">↑ +234% vs. sans IA</div></div>
+        <div class="sc"><div class="stat-n" data-target="94" data-suffix="%">0</div><div class="stat-l">Taux de qualification</div><div class="stat-t">↑ Qualité maximale</div></div>
+        <div class="sc"><div class="stat-n" data-target="3" data-prefix="×">0</div><div class="stat-l">Plus de mandats signés</div><div class="stat-t">↑ En 90 jours</div></div>
+        <div class="sc"><div class="stat-n" data-target="60" data-prefix="&lt;" data-suffix="s">0</div><div class="stat-l">Temps de réponse moyen</div><div class="stat-t">↑ vs. 4h en moyenne</div></div>
+        <div class="sc"><div class="stat-n" data-target="127">0</div><div class="stat-l">Agences accompagnées</div><div class="stat-t">↑ France & Belgique</div></div>
+        <div class="sc"><div class="stat-n" data-target="12" data-prefix="×">0</div><div class="stat-l">ROI moyen constaté</div><div class="stat-t">↑ Sur 6 mois</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TÉMOIGNAGES -->
+<section id="temoignages">
+  <div class="container">
+    <div class="sec-head">
+      <div class="badge">Témoignages</div>
+      <h2 class="sec-title">Ce que disent nos clients</h2>
+      <p class="sec-sub">Plus de 127 agences immobilières nous font déjà confiance à travers la France et la Belgique.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="tc rev">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">Depuis Astroflow, on ne rate plus aucun prospect. Le chatbot qualifie les leads même le week-end à minuit. Notre taux de signature a explosé en 3 mois.</p>
+        <div class="tc-author"><div class="tc-av">MD</div><div class="tc-info"><h4>Marie Dupont</h4><p>Directrice — Dupont Immobilier, Lyon</p></div></div>
+        <div class="tc-result">✓ +312% de leads qualifiés</div>
+      </div>
+      <div class="tc rev d1">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">Notre taux de conversion a triplé en 3 mois. L'IA gère les relances et les follow-ups, on se concentre uniquement sur les visites. Révolutionnaire.</p>
+        <div class="tc-author"><div class="tc-av">TB</div><div class="tc-info"><h4>Thomas Bernard</h4><p>Associé — Bernard & Co, Paris 16e</p></div></div>
+        <div class="tc-result">✓ ×3 mandats en 90 jours</div>
+      </div>
+      <div class="tc rev d2">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">Le ROI est bluffant. Pour 1€ investi dans Astroflow, je génère 12€ de commission. Le contenu IA m'a permis d'attirer des mandants premium que je n'aurais jamais touchés seule.</p>
+        <div class="tc-author"><div class="tc-av">SM</div><div class="tc-info"><h4>Sophie Martin</h4><p>Agent indépendant — Bordeaux</p></div></div>
+        <div class="tc-result">✓ ROI ×12 sur 6 mois</div>
+      </div>
+      <div class="tc rev d1">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">L'intégration a pris 48h exactement comme promis. Dès la première semaine, on avait des leads chauds dans notre CRM automatiquement. Le support est exceptionnel.</p>
+        <div class="tc-author"><div class="tc-av">AL</div><div class="tc-info"><h4>Antoine Lebrun</h4><p>Gérant — Prestige Realty, Marseille</p></div></div>
+        <div class="tc-result">✓ 127 leads dès le 1er mois</div>
+      </div>
+      <div class="tc rev d2">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">J'étais sceptique sur l'IA dans l'immobilier. Aujourd'hui je ne peux plus m'en passer. Le chatbot répond mieux que certains collaborateurs et ne se plaint jamais !</p>
+        <div class="tc-author"><div class="tc-av">CF</div><div class="tc-info"><h4>Caroline Fontaine</h4><p>Directrice — Fontaine Prestige, Nantes</p></div></div>
+        <div class="tc-result">✓ 94% satisfaction clients</div>
+      </div>
+      <div class="tc rev d3">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-quote">Astroflow nous a permis de scaler sans recruter. On gère le double de mandats avec la même équipe. Les fiches biens générées par l'IA sont indiscernables du manuel.</p>
+        <div class="tc-author"><div class="tc-av">PR</div><div class="tc-info"><h4>Philippe Renard</h4><p>CEO — Groupe Renard Immo, Toulouse</p></div></div>
+        <div class="tc-result">✓ ×2 capacité sans recrutement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-wrap">
+      <div>
+        <div class="badge">Nous contacter</div>
+        <h2 class="sec-title">Prêt à automatiser<br><span class="grad-text">votre croissance ?</span></h2>
+        <p class="sec-sub">Réservez votre démo gratuite de 30 minutes et découvrez comment Astroflow peut transformer votre agence dès ce mois-ci.</p>
+        <div class="contact-feats">
+          <div class="cf"><div class="cf-icon">🚀</div><div class="cf-body"><h4>Démo en 30 minutes</h4><p>Présentation personnalisée selon votre marché</p></div></div>
+          <div class="cf"><div class="cf-icon">⚡</div><div class="cf-body"><h4>Mise en place en 48h</h4><p>Sans interruption de votre activité</p></div></div>
+          <div class="cf"><div class="cf-icon">🎯</div><div class="cf-body"><h4>Résultats en 30 jours</h4><p>Garantie satisfaction ou remboursement</p></div></div>
+          <div class="cf"><div class="cf-icon">🛡️</div><div class="cf-body"><h4>Support dédié 7j/7</h4><p>Un expert Astroflow disponible pour vous</p></div></div>
+        </div>
+      </div>
+      <div class="form-card rev">
+        <div id="form-content">
+          <h3 style="font-size:1.35rem;margin-bottom:5px">Demander une démo gratuite</h3>
+          <p style="font-size:.84rem;color:var(--t3);margin-bottom:26px">Réponse garantie en moins de 2h ouvrées</p>
+          <form id="cform">
+            <div class="form-row">
+              <div class="fg"><label>Prénom *</label><input type="text" placeholder="Jean" required></div>
+              <div class="fg"><label>Nom *</label><input type="text" placeholder="Dupont" required></div>
+            </div>
+            <div class="fg"><label>Email professionnel *</label><input type="email" placeholder="jean@monagence.fr" required></div>
+            <div class="fg"><label>Téléphone</label><input type="tel" placeholder="+33 6 XX XX XX XX"></div>
+            <div class="fg"><label>Nom de votre agence</label><input type="text" placeholder="Dupont Immobilier"></div>
+            <div class="fg">
+              <label>Votre objectif principal</label>
+              <select>
+                <option value="">Sélectionnez...</option>
+                <option>Générer plus de leads</option>
+                <option>Automatiser les relances</option>
+                <option>Qualifier mes prospects</option>
+                <option>Créer du contenu</option>
+                <option>Tout à la fois</option>
+              </select>
+            </div>
+            <div class="fg"><label>Message (optionnel)</label><textarea placeholder="Décrivez votre situation actuelle et vos défis..."></textarea></div>
+            <button type="submit" class="btn btn-p fsub">Réserver ma démo gratuite →</button>
+            <p class="fnote">🔒 Vos données sont sécurisées et ne seront jamais revendues</p>
+          </form>
+        </div>
+        <div class="success-box" id="success-box">
+          <div class="si">🚀</div>
+          <h3>Demande envoyée !</h3>
+          <p>Notre équipe vous contacte dans les 2h ouvrées pour planifier votre démo personnalisée. À très bientôt !</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#" class="logo"><div class="logo-icon">⚡</div><span class="logo-text">Astro<span>flow</span></span></a>
+        <p>L'agence IA #1 pour les professionnels de l'immobilier en France et en Belgique. Transformez votre acquisition clients avec des automatisations intelligentes.</p>
+      </div>
+      <div>
+        <p class="fh">Services</p>
+        <ul class="flinks">
+          <li><a href="#">Chatbot IA 24/7</a></li>
+          <li><a href="#">Capture de leads</a></li>
+          <li><a href="#">Relances automatiques</a></li>
+          <li><a href="#">Gestion de contenu</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="fh">Entreprise</p>
+        <ul class="flinks">
+          <li><a href="#">À propos</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Cas clients</a></li>
+          <li><a href="#">Tarifs</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="fh">Contact</p>
+        <ul class="flinks">
+          <li><a href="#">hello@astroflow.ai</a></li>
+          <li><a href="#">+33 1 XX XX XX XX</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2025 Astroflow. Tous droits réservés.</p>
+      <p>Fait avec IA en France 🇫🇷</p>
+    </div>
+  </div>
+</footer>
+
+<!-- CHATBOT WIDGET -->
+<div class="cb-wrap" id="cbWrap">
+  <div class="cb-panel" id="cbPanel">
+    <div class="cb-head">
+      <div class="cb-hav">⚡</div>
+      <div>
+        <div class="cb-hname">Astroflow AI</div>
+        <div class="cb-status"><div class="cb-sdot"></div>En ligne · répond en &lt;10s</div>
+      </div>
+      <button class="cb-close" id="cbClose">×</button>
+    </div>
+    <div class="cb-msgs" id="cbMsgs">
+      <div class="cmsg bot">
+        <div class="cav">⚡</div>
+        <div class="cbubble">Bonjour ! 👋 Je suis l'assistant IA d'Astroflow. Comment puis-je vous aider à automatiser votre agence immobilière ?</div>
+      </div>
+    </div>
+    <div class="qr-area" id="qrArea">
+      <button class="qr" data-msg="Quels sont vos services ?">Nos services</button>
+      <button class="qr" data-msg="Quels sont vos tarifs ?">Tarifs</button>
+      <button class="qr" data-msg="Je voudrais une démo">Démo gratuite</button>
+      <button class="qr" data-msg="Comment ça fonctionne ?">Comment ça marche ?</button>
+    </div>
+    <div class="cb-input-row">
+      <input type="text" class="cb-inp" id="cbInp" placeholder="Votre message...">
+      <button class="cb-send" id="cbSend"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+  <button class="cb-btn" id="cbBtn">💬<div class="cb-dot"></div></button>
+</div>
+
+<script>
+// NAV SCROLL
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('sc', window.scrollY > 50));
+
+// HAMBURGER
+const ham = document.getElementById('ham');
+const mobNav = document.getElementById('mobNav');
+ham.addEventListener('click', () => mobNav.classList.toggle('show'));
+mobNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobNav.classList.remove('show')));
+
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+// PARTICLES
+const cv = document.getElementById('pcanvas');
+const cx = cv.getContext('2d');
+let pts = [];
+const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+resize(); window.addEventListener('resize', resize);
+class P {
+  constructor() { this.init(); }
+  init() {
+    this.x = Math.random() * cv.width;
+    this.y = Math.random() * cv.height;
+    this.r = Math.random() * 1.4 + 0.3;
+    this.vx = (Math.random() - 0.5) * 0.25;
+    this.vy = (Math.random() - 0.5) * 0.25;
+    this.a = Math.random() * 0.45 + 0.08;
+    this.life = 0;
+    this.max = Math.random() * 220 + 80;
+  }
+  tick() {
+    this.x += this.vx; this.y += this.vy; this.life++;
+    if (this.life > this.max || this.x < 0 || this.x > cv.width || this.y < 0 || this.y > cv.height) this.init();
+  }
+  draw() {
+    const p = this.life / this.max;
+    const alpha = p < 0.2 ? p / 0.2 : p > 0.8 ? (1 - p) / 0.2 : 1;
+    cx.beginPath(); cx.arc(this.x, this.y, this.r, 0, 6.28);
+    cx.fillStyle = `rgba(139,92,246,${this.a * alpha})`; cx.fill();
+  }
+}
+for (let i = 0; i < 75; i++) { const p = new P(); p.life = Math.random() * p.max; pts.push(p); }
+(function loop() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+  pts.forEach(p => { p.tick(); p.draw(); });
+  for (let i = 0; i < pts.length; i++)
+    for (let j = i + 1; j < pts.length; j++) {
+      const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 110) { cx.beginPath(); cx.moveTo(pts[i].x, pts[i].y); cx.lineTo(pts[j].x, pts[j].y); cx.strokeStyle = `rgba(139,92,246,${0.07*(1-d/110)})`; cx.lineWidth = .5; cx.stroke(); }
+    }
+  requestAnimationFrame(loop);
+})();
+
+// SCROLL REVEAL
+const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rev, .tc').forEach(el => ro.observe(el));
+
+// COUNTERS
+function animCount(el, target, suffix, prefix) {
+  const dur = 2000, start = performance.now();
+  const tick = now => {
+    const prog = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - prog, 3);
+    const val = Math.floor(target * ease);
+    el.innerHTML = `${prefix || ''}${val}${suffix || ''}`;
+    if (prog < 1) requestAnimationFrame(tick);
+    else el.innerHTML = `${prefix || ''}${target}${suffix || ''}`;
+  };
+  requestAnimationFrame(tick);
+}
+const co = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) {
+    const el = e.target;
+    animCount(el, +el.dataset.target, el.dataset.suffix || '', el.dataset.prefix || '');
+    co.unobserve(el);
+  }
+}), { threshold: 0.4 });
+document.querySelectorAll('.stat-n[data-target]').forEach(el => co.observe(el));
+
+// FORM
+document.getElementById('cform').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.fsub');
+  btn.textContent = 'Envoi en cours…'; btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('form-content').style.display = 'none';
+    document.getElementById('success-box').style.display = 'block';
+  }, 1400);
+});
+
+// CHATBOT
+const cbBtn = document.getElementById('cbBtn');
+const cbPanel = document.getElementById('cbPanel');
+const cbClose = document.getElementById('cbClose');
+const cbMsgs = document.getElementById('cbMsgs');
+const cbInp = document.getElementById('cbInp');
+const cbSend = document.getElementById('cbSend');
+const qrArea = document.getElementById('qrArea');
+let cbOpen = false;
+
+const toggle = open => {
+  cbOpen = open;
+  cbPanel.classList.toggle('open', open);
+  cbBtn.querySelector('.cb-dot').style.display = open ? 'none' : '';
+  cbBtn.childNodes[0].textContent = open ? '×' : '💬';
+};
+cbBtn.addEventListener('click', () => toggle(!cbOpen));
+cbClose.addEventListener('click', () => toggle(false));
+
+const responses = {
+  services: { kw: ['service','faites','offrez','proposez','solution','offre'], r: "Nous proposons 4 services clés 🚀 :\n\n🤖 Chatbot IA 24/7 — réponse instantanée à vos prospects\n🎯 Capture de leads — qualification automatique\n⚡ Relances automatiques — séquences email & SMS\n✍️ Gestion de contenu — posts, fiches biens, newsletters\n\nLequel vous intéresse le plus ?" },
+  tarifs: { kw: ['prix','tarif','coût','cout','combien','abonnement','payer','investissement'], r: "Nos formules démarrent à 297€/mois 💎\n\nTout est inclus :\n✓ Chatbot IA personnalisé\n✓ Onboarding dédié\n✓ Support 7j/7\n✓ Dashboard analytics\n✓ Mises à jour incluses\n\nLe ROI moyen est ×12 en 6 mois. Voulez-vous réserver une démo pour un devis personnalisé ?" },
+  demo: { kw: ['demo','démo','démonstration','essai','tester','voir','réserver'], r: "Super ! Notre démo de 30 minutes est 100% gratuite 🎯\n\nVous découvrirez :\n• Le chatbot en action sur votre marché\n• La configuration pour votre secteur\n• Les résultats attendus pour votre agence\n\nRemplissez simplement le formulaire en bas de page, notre équipe vous rappelle en moins de 2h !" },
+  howto: { kw: ['comment','marche','fonctionne','intégration','setup','installer','démarrer'], r: "L'intégration est ultra-simple en 3 étapes ⚡\n\n1️⃣ Connexion à vos outils en 48h\n2️⃣ Configuration personnalisée par notre équipe\n3️⃣ Résultats visibles dès J+30\n\nAucune compétence technique requise. On s'occupe de tout !" },
+  results: { kw: ['résultat','performance','chiffre','efficace','preuve','statistique'], r: "Nos résultats parlent d'eux-mêmes 📊 :\n\n• +847 leads/mois en moyenne\n• 94% de taux de qualification\n• ×3 mandats signés en 90 jours\n• <60s de temps de réponse\n• ROI ×12 sur 6 mois\n\n127 agences nous font confiance. Voulez-vous voir des études de cas ?" },
+};
+
+function findResp(msg) {
+  const m = msg.toLowerCase();
+  for (const k in responses)
+    if (responses[k].kw.some(w => m.includes(w))) return responses[k].r;
+  return "Merci pour votre message ! 😊 Je peux vous renseigner sur nos services, nos tarifs, ou organiser une démo gratuite. Que souhaitez-vous savoir ?";
+}
+
+function addMsg(text, isUser) {
+  const d = document.createElement('div');
+  d.className = `cmsg ${isUser ? 'user' : 'bot'}`;
+  d.innerHTML = isUser
+    ? `<div class="cbubble">${text}</div><div class="cav u">👤</div>`
+    : `<div class="cav">⚡</div><div class="cbubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  cbMsgs.appendChild(d);
+  cbMsgs.scrollTop = cbMsgs.scrollHeight;
+}
+
+function addTyping() {
+  const d = document.createElement('div');
+  d.className = 'cmsg bot'; d.id = 'typing';
+  d.innerHTML = '<div class="cav">⚡</div><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  cbMsgs.appendChild(d); cbMsgs.scrollTop = cbMsgs.scrollHeight;
+}
+
+function send(txt) {
+  if (!txt.trim()) return;
+  addMsg(txt, true);
+  qrArea.style.display = 'none';
+  cbInp.value = '';
+  addTyping();
+  setTimeout(() => {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+    addMsg(findResp(txt), false);
+  }, 900 + Math.random() * 700);
+}
+
+cbSend.addEventListener('click', () => send(cbInp.value));
+cbInp.addEventListener('keypress', e => { if (e.key === 'Enter') send(cbInp.value); });
+qrArea.querySelectorAll('.qr').forEach(b => b.addEventListener('click', () => send(b.dataset.msg)));
+</script>
+</body>
+</html>
