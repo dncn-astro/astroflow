@@ -748,21 +748,16 @@ document.getElementById('cform').addEventListener('submit', async e => {
     message: form.message.value
   };
   try {
-    const res = await fetch('https://duncand.app.n8n.cloud/webhook/contact-form', {
+    await fetch('https://duncand.app.n8n.cloud/webhook/contact-form', {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'text/plain' }
     });
-    if (res.ok) {
-      document.getElementById('form-content').style.display = 'none';
-      document.getElementById('success-box').style.display = 'block';
-    } else {
-      errEl.textContent = 'Une erreur est survenue. Veuillez réessayer.';
-      errEl.style.display = 'block';
-      btn.textContent = 'Réserver ma démo gratuite →'; btn.disabled = false;
-    }
+    document.getElementById('form-content').style.display = 'none';
+    document.getElementById('success-box').style.display = 'block';
   } catch {
-    errEl.textContent = 'Impossible d\'envoyer le formulaire. Vérifiez votre connexion.';
+    errEl.textContent = 'Impossible d\'envoyer le formulaire. Vérifiez votre connexion internet.';
     errEl.style.display = 'block';
     btn.textContent = 'Réserver ma démo gratuite →'; btn.disabled = false;
   }
@@ -834,4 +829,7 @@ function send(txt) {
 
 cbSend.addEventListener('click', () => send(cbInp.value));
 cbInp.addEventListener('keypress', e => { if (e.key === 'Enter') send(cbInp.value); });
-qrArea.querySelectorAll('.qr').forEach(b => b.addEventListener('click', () => send(b.dataset.msg))
+qrArea.querySelectorAll('.qr').forEach(b => b.addEventListener('click', () => send(b.dataset.msg)));
+</script>
+</body>
+</html>
