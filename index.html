@@ -534,8 +534,7 @@ footer{background:#06060e;border-top:1px solid var(--border);padding:64px 0 28px
         <div id="form-content">
           <h3 style="font-size:1.35rem;margin-bottom:5px">Demander une démo gratuite</h3>
           <p style="font-size:.84rem;color:var(--t3);margin-bottom:26px">Réponse garantie en moins de 2h ouvrées</p>
-          <form id="cform" action="https://formspree.io/f/mykogoqq" method="POST">
-            <input type="hidden" name="_subject" value="Nouvelle demande de démo — Astroflow">
+          <form id="cform">
             <div class="form-row">
               <div class="fg"><label>Prénom *</label><input type="text" name="prenom" placeholder="Jean" required></div>
               <div class="fg"><label>Nom *</label><input type="text" name="nom" placeholder="Dupont" required></div>
@@ -739,18 +738,26 @@ document.getElementById('cform').addEventListener('submit', async e => {
   const errEl = document.getElementById('form-error');
   btn.textContent = 'Envoi en cours…'; btn.disabled = true;
   errEl.style.display = 'none';
+  const payload = {
+    prenom: form.prenom.value,
+    nom: form.nom.value,
+    email: form.email.value,
+    telephone: form.telephone.value,
+    agence: form.agence.value,
+    objectif: form.objectif.value,
+    message: form.message.value
+  };
   try {
-    const res = await fetch('https://formspree.io/f/mykogoqq', {
+    const res = await fetch('https://duncand.app.n8n.cloud/webhook/contact-form', {
       method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
     });
     if (res.ok) {
       document.getElementById('form-content').style.display = 'none';
       document.getElementById('success-box').style.display = 'block';
     } else {
-      const data = await res.json();
-      errEl.textContent = data.errors ? data.errors.map(e => e.message).join(', ') : 'Une erreur est survenue. Veuillez réessayer.';
+      errEl.textContent = 'Une erreur est survenue. Veuillez réessayer.';
       errEl.style.display = 'block';
       btn.textContent = 'Réserver ma démo gratuite →'; btn.disabled = false;
     }
@@ -827,7 +834,4 @@ function send(txt) {
 
 cbSend.addEventListener('click', () => send(cbInp.value));
 cbInp.addEventListener('keypress', e => { if (e.key === 'Enter') send(cbInp.value); });
-qrArea.querySelectorAll('.qr').forEach(b => b.addEventListener('click', () => send(b.dataset.msg)));
-</script>
-</body>
-</html>
+qrArea.querySelectorAll('.qr').forEach(b => b.addEventListener('click', () => send(b.dataset.msg))
