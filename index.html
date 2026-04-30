@@ -534,17 +534,18 @@ footer{background:#06060e;border-top:1px solid var(--border);padding:64px 0 28px
         <div id="form-content">
           <h3 style="font-size:1.35rem;margin-bottom:5px">Demander une démo gratuite</h3>
           <p style="font-size:.84rem;color:var(--t3);margin-bottom:26px">Réponse garantie en moins de 2h ouvrées</p>
-          <form id="cform">
+          <form id="cform" action="https://formspree.io/f/mykogoqq" method="POST">
+            <input type="hidden" name="_subject" value="Nouvelle demande de démo — Astroflow">
             <div class="form-row">
-              <div class="fg"><label>Prénom *</label><input type="text" placeholder="Jean" required></div>
-              <div class="fg"><label>Nom *</label><input type="text" placeholder="Dupont" required></div>
+              <div class="fg"><label>Prénom *</label><input type="text" name="prenom" placeholder="Jean" required></div>
+              <div class="fg"><label>Nom *</label><input type="text" name="nom" placeholder="Dupont" required></div>
             </div>
-            <div class="fg"><label>Email professionnel *</label><input type="email" placeholder="jean@monagence.fr" required></div>
-            <div class="fg"><label>Téléphone</label><input type="tel" placeholder="+33 6 XX XX XX XX"></div>
-            <div class="fg"><label>Nom de votre agence</label><input type="text" placeholder="Dupont Immobilier"></div>
+            <div class="fg"><label>Email professionnel *</label><input type="email" name="email" placeholder="jean@monagence.fr" required></div>
+            <div class="fg"><label>Téléphone</label><input type="tel" name="telephone" placeholder="+33 6 XX XX XX XX"></div>
+            <div class="fg"><label>Nom de votre agence</label><input type="text" name="agence" placeholder="Dupont Immobilier"></div>
             <div class="fg">
               <label>Votre objectif principal</label>
-              <select>
+              <select name="objectif">
                 <option value="">Sélectionnez...</option>
                 <option>Générer plus de leads</option>
                 <option>Automatiser les relances</option>
@@ -553,8 +554,9 @@ footer{background:#06060e;border-top:1px solid var(--border);padding:64px 0 28px
                 <option>Tout à la fois</option>
               </select>
             </div>
-            <div class="fg"><label>Message (optionnel)</label><textarea placeholder="Décrivez votre situation actuelle et vos défis..."></textarea></div>
+            <div class="fg"><label>Message (optionnel)</label><textarea name="message" placeholder="Décrivez votre situation actuelle et vos défis..."></textarea></div>
             <button type="submit" class="btn btn-p fsub">Réserver ma démo gratuite →</button>
+            <p id="form-error" style="display:none;color:#f87171;font-size:.78rem;text-align:center;margin-top:8px;padding:8px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px"></p>
             <p class="fnote">🔒 Vos données sont sécurisées et ne seront jamais revendues</p>
           </form>
         </div>
@@ -730,14 +732,33 @@ const co = new IntersectionObserver(es => es.forEach(e => {
 document.querySelectorAll('.stat-n[data-target]').forEach(el => co.observe(el));
 
 // FORM
-document.getElementById('cform').addEventListener('submit', e => {
+document.getElementById('cform').addEventListener('submit', async e => {
   e.preventDefault();
-  const btn = e.target.querySelector('.fsub');
+  const form = e.target;
+  const btn = form.querySelector('.fsub');
+  const errEl = document.getElementById('form-error');
   btn.textContent = 'Envoi en cours…'; btn.disabled = true;
-  setTimeout(() => {
-    document.getElementById('form-content').style.display = 'none';
-    document.getElementById('success-box').style.display = 'block';
-  }, 1400);
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch('https://formspree.io/f/mykogoqq', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('success-box').style.display = 'block';
+    } else {
+      const data = await res.json();
+      errEl.textContent = data.errors ? data.errors.map(e => e.message).join(', ') : 'Une erreur est survenue. Veuillez réessayer.';
+      errEl.style.display = 'block';
+      btn.textContent = 'Réserver ma démo gratuite →'; btn.disabled = false;
+    }
+  } catch {
+    errEl.textContent = 'Impossible d\'envoyer le formulaire. Vérifiez votre connexion.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Réserver ma démo gratuite →'; btn.disabled = false;
+  }
 });
 
 // CHATBOT
