@@ -1,0 +1,110 @@
+{
+  "name": "Astroflow — Lead Scoring & Nurturing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact-form",
+        "responseMode": "onReceived",
+        "responseData": ""
+      },
+      "id": "7c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f",
+      "name": "Webhook Contact",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "webhookId": "contact-form"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const d = $input.first().json.body ?? $input.first().json;\n\nconst pts = {\n  budget: { moins_100k: 1, '100k_300k': 2, '300k_500k': 3, plus_500k: 3 },\n  delai:  { urgent: 3, court: 3, moyen: 2, long: 1 },\n  besoin: { vente: 3, achat: 2, investissement: 2, location: 1 }\n};\n\nconst score =\n  (pts.budget[d.budget]      ?? 1) +\n  (pts.delai[d.delai]        ?? 1) +\n  (pts.besoin[d.type_besoin] ?? 1);\n\nconst [temperature, emoji] =\n  score >= 7 ? ['CHAUD', '🔥'] :\n  score >= 4 ? ['TIÈDE', '🌡️'] :\n               ['FROID', '❄️'];\n\nconst labels = {\n  budget: { moins_100k: '< 100 000 €', '100k_300k': '100–300k €', '300k_500k': '300–500k €', plus_500k: '> 500 000 €' },\n  delai:  { urgent: 'Urgent (< 1 mois)', court: '1–3 mois', moyen: '3–6 mois', long: '> 6 mois' },\n  besoin: { achat: 'Achat', vente: 'Vente', investissement: 'Investissement locatif', location: 'Location' }\n};\n\nreturn [{ json: {\n  ...d,\n  score,\n  temperature,\n  emoji,\n  budget_label: labels.budget[d.budget]      ?? d.budget      ?? 'N/A',\n  delai_label:  labels.delai[d.delai]        ?? d.delai       ?? 'N/A',\n  besoin_label: labels.besoin[d.type_besoin] ?? d.type_besoin ?? 'N/A',\n  prenom:    d.prenom    ?? '',\n  nom:       d.nom       ?? '',\n  email:     d.email     ?? '',\n  telephone: d.telephone ?? '',\n  agence:    d.agence    ?? '',\n  objectif:  d.objectif  ?? '',\n  message:   d.message   ?? ''\n}}];"
+      },
+      "id": "8d2e3f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a",
+      "name": "Score Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "notifications@astroflow.fr",
+        "toEmail": "dncn0708@gmail.com",
+        "subject": "={{ $json.emoji }} Lead {{ $json.temperature }} ({{ $json.score }}/9) — {{ $json.prenom }} {{ $json.nom }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;padding:20px\">\n  <div style=\"background:linear-gradient(135deg,#8B5CF6,#A855F7);padding:28px;border-radius:12px 12px 0 0\">\n    <h2 style=\"color:white;margin:0 0 14px\">⚡ Astroflow — Nouveau Lead</h2>\n    <span style=\"display:inline-block;padding:8px 22px;background:rgba(255,255,255,0.2);border-radius:100px;color:white;font-size:20px;font-weight:bold\">{{ $json.emoji }} {{ $json.temperature }} — {{ $json.score }}/9</span>\n  </div>\n  <div style=\"background:#fff;border:1px solid #E5E7EB;border-top:none;padding:28px;border-radius:0 0 12px 12px\">\n    <h3 style=\"color:#111827;margin-top:0;padding-bottom:10px;border-bottom:1px solid #F3F4F6\">Coordonnées</h3>\n    <table style=\"width:100%;border-collapse:collapse;margin-bottom:24px\">\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px;width:110px\">Nom</td><td style=\"font-weight:600;color:#111827\">{{ $json.prenom }} {{ $json.nom }}</td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Email</td><td><a href=\"mailto:{{ $json.email }}\" style=\"color:#8B5CF6;font-weight:500\">{{ $json.email }}</a></td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Téléphone</td><td style=\"color:#374151\">{{ $json.telephone || 'Non renseigné' }}</td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Agence</td><td style=\"color:#374151\">{{ $json.agence || 'N/A' }}</td></tr>\n    </table>\n    <h3 style=\"color:#111827;padding-bottom:10px;border-bottom:1px solid #F3F4F6\">Qualification</h3>\n    <table style=\"width:100%;border-collapse:collapse;margin-bottom:24px\">\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px;width:110px\">Besoin</td><td style=\"font-weight:600;color:#111827\">{{ $json.besoin_label }}</td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Budget</td><td style=\"font-weight:600;color:#111827\">{{ $json.budget_label }}</td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Délai</td><td style=\"font-weight:600;color:#111827\">{{ $json.delai_label }}</td></tr>\n      <tr><td style=\"color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:5px 0 2px\">Objectif</td><td style=\"color:#374151\">{{ $json.objectif || 'N/A' }}</td></tr>\n    </table>\n    {{ $json.message ? '<h3 style=\"color:#111827;padding-bottom:10px;border-bottom:1px solid #F3F4F6\">Message</h3><p style=\"color:#374151;line-height:1.75;margin:0\">' + $json.message + '</p>' : '' }}\n  </div>\n</div>",
+        "options": {}
+      },
+      "id": "9e3f4a5b-6c7d-8e9f-0a1b-2c3d4e5f6a7b",
+      "name": "Email — Notif Agence",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [660, 300],
+      "credentials": {
+        "smtp": {
+          "id": "REMPLACE_PAR_TON_CREDENTIAL_SMTP_ID",
+          "name": "SMTP Astroflow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 24,
+        "unit": "hours"
+      },
+      "id": "b05b6c7d-8e9f-0a1b-2c3d-4e5f6a7b8c9d",
+      "name": "Attendre 24h",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [880, 300],
+      "webhookId": "wait-relance-24h"
+    },
+    {
+      "parameters": {
+        "fromEmail": "notifications@astroflow.fr",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Votre démo Astroflow — on est là 🚀",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;padding:20px\">\n  <div style=\"background:linear-gradient(135deg,#8B5CF6,#A855F7);padding:36px;border-radius:12px 12px 0 0;text-align:center\">\n    <div style=\"font-size:52px\">⚡</div>\n    <h2 style=\"color:white;margin:8px 0\">Astroflow</h2>\n    <p style=\"color:rgba(255,255,255,0.85);margin:0;font-size:14px\">Solutions IA pour l'immobilier</p>\n  </div>\n  <div style=\"background:#fff;border:1px solid #E5E7EB;border-top:none;padding:36px;border-radius:0 0 12px 12px\">\n    <p style=\"font-size:16px;color:#111827;margin-top:0\">Bonjour <strong>{{ $json.prenom }}</strong>,</p>\n    <p style=\"color:#374151;line-height:1.75\">Suite à votre demande de démo hier, je voulais m'assurer que vous n'avez pas eu de question restée sans réponse.</p>\n    <p style=\"color:#374151;line-height:1.75\">Voici un rappel de ce qu'Astroflow automatise pour votre agence :</p>\n    <ul style=\"color:#374151;line-height:2;padding-left:20px\">\n      <li>🤖 Chatbot IA 24h/7j qui répond à vos prospects</li>\n      <li>🎯 Qualification automatique (budget, délai, projet)</li>\n      <li>⚡ Relances email programmées</li>\n      <li>📊 Tableau de bord en temps réel</li>\n    </ul>\n    <div style=\"text-align:center;margin:36px 0\">\n      <a href=\"https://astroflow.fr/#contact\" style=\"display:inline-block;background:linear-gradient(135deg,#8B5CF6,#A855F7);color:white;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 8px 30px rgba(139,92,246,0.4)\">Réserver ma démo gratuite →</a>\n    </div>\n    <p style=\"color:#6B7280;font-size:13px;border-top:1px solid #E5E7EB;padding-top:20px;margin-bottom:0\">À bientôt,<br><strong>Duncan</strong> — Fondateur Astroflow<br><a href=\"mailto:contact@astroflow.fr\" style=\"color:#8B5CF6\">contact@astroflow.fr</a></p>\n  </div>\n</div>",
+        "options": {}
+      },
+      "id": "c16c7d8e-9f0a-1b2c-3d4e-5f6a7b8c9d0e",
+      "name": "Email — Relance Prospect",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1100, 300],
+      "credentials": {
+        "smtp": {
+          "id": "REMPLACE_PAR_TON_CREDENTIAL_SMTP_ID",
+          "name": "SMTP Astroflow"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Contact": {
+      "main": [
+        [{ "node": "Score Lead", "type": "main", "index": 0 }]
+      ]
+    },
+    "Score Lead": {
+      "main": [
+        [{ "node": "Email — Notif Agence", "type": "main", "index": 0 }]
+      ]
+    },
+    "Email — Notif Agence": {
+      "main": [
+        [{ "node": "Attendre 24h", "type": "main", "index": 0 }]
+      ]
+    },
+    "Attendre 24h": {
+      "main": [
+        [{ "node": "Email — Relance Prospect", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
